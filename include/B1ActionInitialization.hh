@@ -34,14 +34,19 @@
 
 /// Action initialization class.
 
+class TTree;
+
 class B1ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    B1ActionInitialization();
+    B1ActionInitialization(TTree * ot);
     virtual ~B1ActionInitialization();
 
     virtual void BuildForMaster() const;
     virtual void Build() const;
+
+private:
+  TTree * outtree;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

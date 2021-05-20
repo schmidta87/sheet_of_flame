@@ -35,21 +35,27 @@
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
+class TTree;
 
 /// Detector construction class to define materials and geometry.
 
 class B1DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
-    B1DetectorConstruction();
+    B1DetectorConstruction(TTree * ot);
     virtual ~B1DetectorConstruction();
 
     virtual G4VPhysicalVolume* Construct();
+  virtual void ConstructSDandField();
     
     G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
 
-  protected:
-    G4LogicalVolume*  fScoringVolume;
+protected:
+  G4LogicalVolume*  fScoringVolume;
+
+private:
+  TTree * outtree;
+  G4LogicalVolume * fLogicalSphere;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

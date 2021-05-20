@@ -48,6 +48,9 @@
 
 #include "Randomize.hh"
 
+#include "TFile.h"
+#include "TTree.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc,char** argv)
@@ -61,6 +64,10 @@ int main(int argc,char** argv)
 
   // Choose the Random engine
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
+
+  // Set up a root output file
+  TFile * outfile = new TFile("output.root","RECREATE");
+  TTree * outtree = new TTree("MCout","Output tree");
   
   // Construct the default run manager
   //
@@ -80,7 +87,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new B1DetectorConstruction());
+  runManager->SetUserInitialization(new B1DetectorConstruction(outtree));
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
@@ -88,7 +95,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(physicsList);
     
   // User action initialization
-  runManager->SetUserInitialization(new B1ActionInitialization());
+  runManager->SetUserInitialization(new B1ActionInitialization(outtree));
   
   // Initialize visualization
   //
@@ -119,6 +126,9 @@ int main(int argc,char** argv)
   // Free the store: user actions, physics_list and detector_description are
   // owned and deleted by the run manager, so they should not be deleted 
   // in the main() program !
+
+  outfile->Write();
+  outfile->Close();
   
   delete visManager;
   delete runManager;

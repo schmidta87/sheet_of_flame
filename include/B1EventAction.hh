@@ -37,21 +37,23 @@ class B1RunAction;
 
 /// Event action class
 ///
+class TTree;
 
 class B1EventAction : public G4UserEventAction
 {
-  public:
-    B1EventAction(B1RunAction* runAction);
-    virtual ~B1EventAction();
-
-    virtual void BeginOfEventAction(const G4Event* event);
-    virtual void EndOfEventAction(const G4Event* event);
-
-    void AddEdep(G4double edep) { fEdep += edep; }
-
-  private:
-    B1RunAction* fRunAction;
-    G4double     fEdep;
+public:
+  B1EventAction(B1RunAction* runAction, TTree* ot);
+  virtual ~B1EventAction();
+  
+  virtual void BeginOfEventAction(const G4Event* event);
+  virtual void EndOfEventAction(const G4Event* event);
+  
+  void AddEdep(G4double edep) { fEdep += edep; }
+  
+private:
+  B1RunAction* fRunAction;
+  TTree * outtree;
+  G4double     fEdep;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

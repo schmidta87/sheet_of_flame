@@ -28,7 +28,6 @@
 /// \brief Implementation of the B1DetectorConstruction class
 
 #include "B1DetectorConstruction.hh"
-#include "B1MagneticField.hh"
 
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
@@ -42,16 +41,22 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 
-#include "G4MagneticField.hh"
-
 #include "G4Element.hh"
+#include "B1SphereSD.hh"
+#include "G4SDManager.hh"
+#include "G4VSensitiveDetector.hh"
+
+#include "TTree.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1DetectorConstruction::B1DetectorConstruction()
+B1DetectorConstruction::B1DetectorConstruction(TTree *ot)
 : G4VUserDetectorConstruction(),
-  fScoringVolume(0)
-{ }
+  fScoringVolume(0),
+  fLogicalSphere(0)
+{
+  outtree = ot;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -141,6 +146,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   G4LogicalVolume* logicDet = new G4LogicalVolume(solidDet,
 						  high_vacuum,
 						  "Det");
+  fLogicalSphere=logicDet; // store this pointer so we can register a sensitive detector
 
 
   new G4PVPlacement(0,                       //no rotation
@@ -160,4 +166,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   return physWorld;
 }
 
+void B1DetectorConstruction::ConstructSDandField()
+{
+  auto sdManager = G4SDManager::GetSDMpointer();
+  G4String SDname;
+
+  B1SphereSD* sphereSD = new B1SphereSD(outtree,SDname="sphere");
+  sdManager->AddNewDetector(sphereSD);
+
+  // Register logical volumes
+  fLogicalSphere->SetSensitiveDetector(sphereSD);
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+

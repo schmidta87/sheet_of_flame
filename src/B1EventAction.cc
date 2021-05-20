@@ -33,13 +33,17 @@
 #include "G4Event.hh"
 #include "G4RunManager.hh"
 
+#include "TTree.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1EventAction::B1EventAction(B1RunAction* runAction)
+B1EventAction::B1EventAction(B1RunAction* runAction, TTree* ot)
 : G4UserEventAction(),
   fRunAction(runAction),
   fEdep(0.)
-{} 
+{
+  outtree= ot;
+} 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,6 +63,8 @@ void B1EventAction::EndOfEventAction(const G4Event*)
 {   
   // accumulate statistics in run action
   fRunAction->AddEdep(fEdep);
+
+  outtree->Fill();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

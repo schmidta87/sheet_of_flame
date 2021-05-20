@@ -33,11 +33,15 @@
 #include "B1EventAction.hh"
 #include "B1SteppingAction.hh"
 
+#include "TTree.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B1ActionInitialization::B1ActionInitialization()
+B1ActionInitialization::B1ActionInitialization(TTree * ot)
  : G4VUserActionInitialization()
-{}
+{
+  outtree = ot;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -61,7 +65,7 @@ void B1ActionInitialization::Build() const
   B1RunAction* runAction = new B1RunAction;
   SetUserAction(runAction);
   
-  B1EventAction* eventAction = new B1EventAction(runAction);
+  B1EventAction* eventAction = new B1EventAction(runAction,outtree);
   SetUserAction(eventAction);
   
   SetUserAction(new B1SteppingAction(eventAction));
